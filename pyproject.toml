@@ -1,0 +1,24 @@
+[project]
+name = "spark-http-async"
+version = "0.1.0"
+description = "Enrich a PySpark DataFrame with asynchronous HTTP calls"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Michal Klempa" }]
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pyspark>=4.2.0",
+    "spark-async",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["spark_http_async"]
+
+[tool.uv.sources]
+spark-async = { git = "https://github.com/michalklempa/spark-async" }

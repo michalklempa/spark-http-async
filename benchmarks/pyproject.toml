@@ -1,0 +1,15 @@
+[project]
+name = "spark-http-async-benchmarks"
+version = "0.1.0"
+description = "Benchmarks comparing spark-http-async against plain requests and httpx clients"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pandas>=3.0.6",
+    "pyspark>=4.2.0",
+    "requests>=2.34.2",
+    "spark-async",
+]
+
+[tool.uv.sources]
+spark-async = { path = "../../spark-async", editable = true }
