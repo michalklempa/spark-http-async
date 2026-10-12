@@ -31,8 +31,8 @@ The input DataFrame needs these columns:
 | Column | Type | Meaning |
 |---|---|---|
 | `url` | string | URL to `POST` to |
-| `body` | binary, nullable | request body |
-| `headers` | map of string to string, nullable | request headers |
+| `body` | binary, nullable | request body. The column is optional: without it, requests are sent with no body |
+| `headers` | map of string to string, nullable | request headers. The column is optional: without it, only the default `httpx` headers are sent |
 
 Any other columns are carried through unchanged.
 

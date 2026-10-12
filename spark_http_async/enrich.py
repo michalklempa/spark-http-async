@@ -22,11 +22,13 @@ class HttpEnrichMapper(AsyncMapper[Row, dict[str, Any]]):
 
     async def map(self, row: Row) -> dict[str, Any]:
         result: dict[str, Any] = row.asDict(recursive=True)
+        body = result.get("body")
+        headers = result.get("headers")
         try:
             response = await self.client.post(
                 row.url,
-                content=bytes(row.body) if row.body is not None else None,
-                headers=dict(row.headers) if row.headers else None,
+                content=bytes(body) if body is not None else None,
+                headers=dict(headers) if headers else None,
             )
             result.update(
                 response_body=response.content,
