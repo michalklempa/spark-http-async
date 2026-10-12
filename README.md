@@ -30,7 +30,8 @@ The input DataFrame needs these columns:
 
 | Column | Type | Meaning |
 |---|---|---|
-| `url` | string | URL to `POST` to |
+| `url` | string | URL to send the request to |
+| `method` | string, nullable | HTTP method, `POST` when missing or null. The column is optional |
 | `body` | binary, nullable | request body. The column is optional: without it, requests are sent with no body |
 | `headers` | map of string to string, nullable | request headers. The column is optional: without it, only the default `httpx` headers are sent |
 
@@ -60,6 +61,23 @@ enriched.select(
     F.col("response_body").cast("string").alias("response"),
     "response_error",
 ).show(truncate=False)
+```
+
+`enrich()` is a thin layer over `send(df, build_request, max_in_flight)`. `send()` imposes no structure on the DataFrame: `build_request` is a function `(row: Row) -> httpx.Request` that runs on the executors for every row, and `send()` sends the request it returns, carries all input columns through and adds the response columns. `enrich(df)` is `send(df, default_build_request)`, where the default builder reads `url`, and optionally `method` (default `POST`), `headers` and `body`.
+
+To build requests your own way, pass your own builder. It is pickled to the executors, so define it at module level in a module the workers can import:
+
+```python
+import httpx
+
+from spark_http_async import send
+
+
+def get_item(row) -> httpx.Request:
+    return httpx.Request("GET", "http://localhost:4040/items", params={"id": row.id})
+
+
+responses = send(df, get_item, max_in_flight=50)
 ```
 
 `enrich(df, max_in_flight=10)` returns a DataFrame with the input columns plus:
